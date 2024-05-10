@@ -1,7 +1,9 @@
 .idea/*
-GeoLayoutLM/preprocess/*
+preprocess/*
 
 
 *.iml
 *.xml
+*.jpg
+*.lock
 
