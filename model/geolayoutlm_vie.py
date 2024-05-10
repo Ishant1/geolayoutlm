@@ -1,15 +1,13 @@
 # Copyright (c) Alibaba, Inc. and its affiliates.
 
-import os
 import sys
 import logging
 
 import torch
 from torch import nn
-import random
 
-from GeoLayoutLM.bros import BrosConfig, BrosTokenizer
-from GeoLayoutLM.bros import GeoLayoutLMModel, PairGeometricHead, MultiPairsGeometricHead
+from bros import BrosConfig, BrosTokenizer
+from bros import GeoLayoutLMModel, PairGeometricHead, MultiPairsGeometricHead
 
 logging.basicConfig(
     stream=sys.stdout,

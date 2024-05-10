@@ -7,7 +7,7 @@ import numpy as np
 import torch
 from torch.utils.data.dataset import Dataset
 
-from GeoLayoutLM.utils import get_class_names
+from utils import get_class_names
 
 
 class VIEDataset(Dataset):

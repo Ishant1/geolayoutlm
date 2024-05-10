@@ -1,2 +1,7 @@
-.idea\*
-GeoLayoutLM\preprocess\*
+.idea/*
+GeoLayoutLM/preprocess/*
+
+
+*.iml
+*.xml
+

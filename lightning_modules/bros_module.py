@@ -4,17 +4,15 @@ import torch
 import torch.utils.data
 from overrides import overrides
 from pytorch_lightning import LightningModule
-from pytorch_lightning.loggers.tensorboard import TensorBoardLogger
-from pytorch_lightning.utilities.distributed import rank_zero_only
 from torch.optim import SGD, Adam, AdamW
 from torch.optim.lr_scheduler import LambdaLR
 
-from GeoLayoutLM.lightning_modules.schedulers import (
+from lightning_modules.schedulers import (
     cosine_scheduler,
     linear_scheduler,
     multistep_scheduler,
 )
-from GeoLayoutLM.model import get_model
+from model import get_model
 
 
 class BROSModule(LightningModule):

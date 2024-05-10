@@ -8,7 +8,7 @@ from torch.utils.data.dataloader import DataLoader
 import cv2
 import numpy as np
 
-from GeoLayoutLM.lightning_modules.data_modules.vie_dataset import VIEDataset
+from lightning_modules.data_modules.vie_dataset import VIEDataset
 
 
 class VIEDataModule(pl.LightningDataModule):

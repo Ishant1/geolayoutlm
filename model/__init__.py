@@ -1,4 +1,4 @@
-from GeoLayoutLM.model.geolayoutlm_vie import GeoLayoutLMVIEModel
+from model.geolayoutlm_vie import GeoLayoutLMVIEModel
 
 def get_model(cfg):
     if cfg.model.head in ["vie"]:
