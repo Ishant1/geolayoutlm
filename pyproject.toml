@@ -1,0 +1,29 @@
+[tool.poetry]
+name = "geolayoutlm"
+version = "0.1.0"
+description = ""
+authors = ["Ishant Aggarwal <iagg1946@gmail.com>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.10"
+nptyping="1.4.2"
+numpy="1.21.0"
+pytorch-lightning="1.5.10"
+omegaconf="*"
+Pillow="*"
+six="*"
+tqdm="*"
+opencv-python="*"
+overrides="3.1.0"
+transformers="*"
+seqeval="1.2.2"
+imagesize="*"
+timm="*"
+tensorboard="2.2.0"
+protobuf="3.20.*"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
