@@ -3,16 +3,19 @@
 # The log file location to be saved: {workspace}/tensorboard_logs/
 workspace: ./finetune
 
+seed: 1
+cudnn_deterministic: False
+cudnn_benchmark: True
 dataset: funsd
-dataset_root_path: ./GeoLayoutLM/preprocess/funsd_el
+dataset_root_path: /content/drive/MyDrive/GeoLayout/post
 task: ee_el
 img_h: 768
 img_w: 768
 
 model:
   backbone: alibaba-damo/geolayoutlm-large-uncased
-  config_json: ./GeoLayoutLM/configs/GeoLayoutLM/GeoLayoutLM_large_model_config.json
-  model_ckpt: C:/dev/models/geolayoutlm_large_pretrain.pt
+  config_json: ./configs/GeoLayoutLM/GeoLayoutLM_large_model_config.json
+  model_ckpt: /content/drive/MyDrive/GeoLayout/geolayoutlm_large_pretrain.pt
   head: vie
   use_inner_id: true
   max_prob_as_father: true
@@ -25,7 +28,7 @@ train:
   max_block_num: 150
   max_epochs: 200
   use_fp16: False
-  accelerator: gpu
+  accelerator: cpu
   strategy:
     type: ""
 

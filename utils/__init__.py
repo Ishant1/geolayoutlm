@@ -9,7 +9,7 @@ from pytorch_lightning.loggers.tensorboard import TensorBoardLogger
 from pytorch_lightning.plugins import DDPPlugin
 
 
-def get_config(default_conf_file="./configs/default.yaml"):
+def get_config(default_conf_file="./configs/finetune_funsd.yaml"):
     cfg = OmegaConf.load(default_conf_file)
 
     cfg_cli = _get_config_from_cli()
