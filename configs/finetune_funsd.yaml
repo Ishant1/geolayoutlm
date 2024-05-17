@@ -6,7 +6,7 @@ workspace: ./finetune
 seed: 1
 cudnn_deterministic: False
 cudnn_benchmark: True
-dataset: funsd
+dataset: floorplan
 dataset_root_path: /content/drive/MyDrive/GeoLayout/post
 task: ee_el
 img_h: 768

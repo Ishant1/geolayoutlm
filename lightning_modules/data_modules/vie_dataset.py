@@ -3,6 +3,7 @@ import itertools
 import json
 import os
 import cv2
+from PIL import Image
 import numpy as np
 import torch
 from torch.utils.data.dataset import Dataset
@@ -95,7 +96,11 @@ class VIEDataset(Dataset):
 
         img_path = os.path.join(self.dataset_root_path, json_obj["meta"]["image_path"])
 
-        image = cv2.resize(cv2.imread(img_path, 1), (self.img_w, self.img_h))
+        
+        image = cv2.imread(img_path, 1)
+        image = image if type(image)==np.ndarray else np.asarray(Image.open(img_path).convert('RGB'))
+
+        image = cv2.resize(image, (self.img_w, self.img_h))
         image = image.astype("float32").transpose(2, 0, 1)
 
         return_dict["image_path"] = img_path

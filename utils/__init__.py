@@ -50,6 +50,9 @@ def _update_config(cfg):
         cfg.dataset_root_path = os.path.join(cfg.dataset_root_path, "cord_geo")
         cfg.model.n_classes = 2 * 22 + 1
 
+    elif cfg.dataset == 'floorplan':
+        cfg.model.n_classes = 2*2+1
+
     # set per-gpu batch size
     # num_devices = torch.cuda.device_count()
     # for mode in ["train", "val"]:
