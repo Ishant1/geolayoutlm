@@ -7,7 +7,7 @@ seed: 1
 cudnn_deterministic: False
 cudnn_benchmark: True
 dataset: floorplan
-dataset_root_path: /content/drive/MyDrive/GeoLayout/post
+dataset_root_path: /home/jupyter/GeoLayout/post
 task: ee_el
 img_h: 768
 img_w: 768
@@ -15,20 +15,20 @@ img_w: 768
 model:
   backbone: alibaba-damo/geolayoutlm-large-uncased
   config_json: ./configs/GeoLayoutLM/GeoLayoutLM_large_model_config.json
-  model_ckpt: /content/drive/MyDrive/GeoLayout/geolayoutlm_large_pretrain.pt
+  model_ckpt: /home/jupyter/geolayoutlm_large_pretrain.pt
   head: vie
   use_inner_id: true
   max_prob_as_father: true
   max_prob_as_father_upperbound: false
 
 train:
-  batch_size: 6
+  batch_size: 2
   num_samples_per_epoch: 149
   max_seq_length: 512
   max_block_num: 150
-  max_epochs: 200
-  use_fp16: False
-  accelerator: cpu
+  max_epochs: 20
+  use_fp16: True
+  accelerator: gpu
   strategy:
     type: ""
 

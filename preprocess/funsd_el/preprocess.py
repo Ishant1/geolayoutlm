@@ -13,14 +13,14 @@ VOCA = "bert-base-uncased"
 
 CLASSES = ["O", "ROOM_NAME", "DIMENSION"]
 CLASSES_VALID = ["ROOM_NAME", "DIMENSION"]
-INPUT_PATH = r"C:\dev\datasets\floorplan\GeoLayDir\pre"
+INPUT_PATH = "/home/jupyter/GeoLayout/val"
 anno_dir = 'annotations'
 # if not os.path.exists(INPUT_PATH):
 #     os.system("wget https://guillaumejaume.github.io/FUNSD/dataset.zip")
 #     os.system("unzip dataset.zip")
 #     os.system("rm -rf dataset.zip __MACOSX")
 
-OUTPUT_PATH = r"C:\dev\datasets\floorplan\GeoLayDir\post"
+OUTPUT_PATH = "/home/jupyter/GeoLayout/val_post"
 os.makedirs(OUTPUT_PATH, exist_ok=True)
 os.makedirs(os.path.join(OUTPUT_PATH, "preprocessed"), exist_ok=True)
 

@@ -183,10 +183,10 @@ class VIEDataset(Dataset):
             token_span = first_token_ext[blk_idx+1] - first_token_ext[blk_idx]
             # block box
             bb_blk = json_obj['blocks']['boxes'][blk_idx]
-            bb_blk[0] = max(0, min(bb_blk[0], width))
-            bb_blk[1] = max(0, min(bb_blk[1], height))
-            bb_blk[2] = max(0, min(bb_blk[2], width))
-            bb_blk[3] = max(0, min(bb_blk[3], height))
+            bb_blk[0] = max(0, min(bb_blk[0], width)) if (bb_blk[0]< width or bb_blk[0]%1000!=0)  else max(0, min(bb_blk[0]/1000, width))
+            bb_blk[1] = max(0, min(bb_blk[1], height)) if (bb_blk[1]< height or bb_blk[1]%1000!=0) else max(0, min(bb_blk[1]/1000, height))
+            bb_blk[2] = max(0, min(bb_blk[2], width)) if (bb_blk[2]< width or bb_blk[2]%1000!=0) else max(0, min(bb_blk[2]/1000, width))
+            bb_blk[3] = max(0, min(bb_blk[3], height)) if (bb_blk[3]< height or bb_blk[3]%1000!=0) else max(0, min(bb_blk[3]/1000, height))
             list_blk_bbs.extend([bb_blk for _ in range(token_span)])
             # line_rank_id
             return_dict["line_rank_id"][first_token_ext[blk_idx]:first_token_ext[blk_idx+1]] = line_id
