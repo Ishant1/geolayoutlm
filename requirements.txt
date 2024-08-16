@@ -12,6 +12,7 @@ transformers
 seqeval==1.2.2
 imagesize
 timm
+typer
 
 tensorboard>=2.2.0
 

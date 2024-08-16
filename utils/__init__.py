@@ -148,3 +148,21 @@ def get_label_map(dataset_root_path):
     for line_idx, line in enumerate(lines):
         label_map[line_idx] = line.strip()
     return label_map
+
+
+def get_eval_kwargs_geolayoutlm_vie(
+        dataset_root_path: str | None = None,
+        classes: list[str] | None = None,
+):
+    if not (dataset_root_path or classes):
+        ValueError("Need to provide at least one of path or classes")
+
+    class_names = get_class_names(dataset_root_path) if dataset_root_path else classes
+    bio_class_names = ["O"]
+    for class_name in class_names:
+        if not class_name.startswith('O'):
+            bio_class_names.extend([f"B-{class_name}", f"I-{class_name}"])
+    eval_kwargs = {
+        "bio_class_names": bio_class_names,
+    }
+    return eval_kwargs

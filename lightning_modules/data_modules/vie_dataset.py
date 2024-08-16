@@ -13,6 +13,7 @@ from utils import get_class_names
 class VIEDataset(Dataset):
     def __init__(
         self,
+        raw_files,
         dataset,
         task,
         backbone_type,
@@ -23,7 +24,6 @@ class VIEDataset(Dataset):
         max_block_num=256,
         img_h=768,
         img_w=768,
-        mode=None,
     ):
         self.dataset = dataset
         self.task = task
@@ -36,7 +36,6 @@ class VIEDataset(Dataset):
         self.max_block_num = max_block_num
         self.img_h = img_h
         self.img_w = img_w
-        self.mode = mode
         print(f"data_root: {dataset_root_path}")
 
         if getattr(self.tokenizer, "vocab", None) is not None:
@@ -50,7 +49,10 @@ class VIEDataset(Dataset):
             self.sep_token_id = self.tokenizer.sep_token_id
             self.unk_token_id = self.tokenizer.unk_token_id
 
-        self.examples = self._load_examples()
+        if type(raw_files)=='str':
+            self.examples = self._load_examples(raw_files)
+        elif type(raw_files)==list:
+            self.examples = raw_files
 
         self.class_names = get_class_names(self.dataset_root_path)
         self.class_idx_dic = dict(
@@ -68,10 +70,10 @@ class VIEDataset(Dataset):
             ]
         )
 
-    def _load_examples(self):
+    def _load_examples(self, raw_files):
         examples = []
         with open(
-            os.path.join(self.dataset_root_path, f"preprocessed_files_{self.mode}.txt"),
+            os.path.join(self.dataset_root_path, raw_files),
             "r",
             encoding="utf-8",
         ) as fp:
@@ -83,6 +85,7 @@ class VIEDataset(Dataset):
 
         return examples
 
+
     def __len__(self):
         return len(self.examples)
 
@@ -93,12 +96,11 @@ class VIEDataset(Dataset):
         width = json_obj["meta"]["imageSize"]["width"]
         height = json_obj["meta"]["imageSize"]["height"]
 
-        img_path = os.path.join(self.dataset_root_path, json_obj["meta"]["image_path"])
 
-        image = cv2.resize(cv2.imread(img_path, 1), (self.img_w, self.img_h))
+        image = cv2.resize(cv2.imread(json_obj["meta"]["image_path"], 1), (self.img_w, self.img_h))
         image = image.astype("float32").transpose(2, 0, 1)
 
-        return_dict["image_path"] = img_path
+        return_dict["image_path"] = json_obj["meta"]["image_path"]
         return_dict["image"] = image
         return_dict["size_raw"] = np.array([width, height])
 

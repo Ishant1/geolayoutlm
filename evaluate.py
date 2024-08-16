@@ -11,8 +11,8 @@ from glob import glob
 import cv2
 
 from lightning_modules.data_modules.vie_dataset import VIEDataset
-from model import get_model
-from utils import get_class_names, get_config, get_label_map
+from utils import get_config, get_eval_kwargs_geolayoutlm_vie
+from utils.load_model import get_model_and_load_weights
 
 
 def main():
@@ -38,12 +38,8 @@ def main():
                     break
         cfg.pretrained_model_file = os.path.join(cfg.workspace, "checkpoints", pt_to_be_loaded)
 
-    net = get_model(cfg)
+    net = get_model_and_load_weights(cfg)
 
-    load_model_weight(net, cfg.pretrained_model_file)
-
-    net.to("cuda")
-    net.eval()
 
     if cfg.model.backbone in [
         "alibaba-damo/geolayoutlm-base-uncased",
@@ -56,13 +52,13 @@ def main():
         )
 
     dataset = VIEDataset(
+        f"preprocessed_files_{mode}.txt",
         cfg.dataset,
         cfg.task,
         backbone_type,
         cfg.model.head,
         cfg.dataset_root_path,
         net.tokenizer,
-        mode=mode,
     )
 
     data_loader = DataLoader(
@@ -112,38 +108,6 @@ def main():
     if len(cfg[mode].dump_dir) > 0:
         visualize_tagging(cfg[mode].dump_dir)
         visualize_linking(cfg[mode].dump_dir)
-
-
-def load_model_weight(net, pretrained_model_file):
-    print("Loading ckpt from:", pretrained_model_file)
-    pretrained_model_state_dict = torch.load(pretrained_model_file, map_location="cpu")
-    if "state_dict" in pretrained_model_state_dict.keys():
-        pretrained_model_state_dict = pretrained_model_state_dict["state_dict"]
-    new_state_dict = {}
-    valid_keys = net.state_dict().keys()
-    invalid_keys = []
-    for k, v in pretrained_model_state_dict.items():
-        new_k = k
-        if new_k.startswith("net."):
-            new_k = new_k[len("net.") :]
-        if new_k in valid_keys:
-            new_state_dict[new_k] = v
-        else:
-            invalid_keys.append(new_k)
-    print(f"These keys are invalid in the ckpt: [{','.join(invalid_keys)}]")
-    net.load_state_dict(new_state_dict)
-
-
-def get_eval_kwargs_geolayoutlm_vie(dataset_root_path):
-    class_names = get_class_names(dataset_root_path)
-    bio_class_names = ["O"]
-    for class_name in class_names:
-        if not class_name.startswith('O'):
-            bio_class_names.extend([f"B-{class_name}", f"I-{class_name}"])
-    eval_kwargs = {
-        "bio_class_names": bio_class_names,
-    }
-    return eval_kwargs
 
 
 def visualize_tagging(detail_path):

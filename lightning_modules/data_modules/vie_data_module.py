@@ -47,6 +47,7 @@ class VIEDataModule(pl.LightningDataModule):
         start_time = time.time()
 
         dataset = VIEDataset(
+            f"preprocessed_files_train.txt",
             self.cfg.dataset,
             self.cfg.task,
             self.backbone_type,
@@ -57,7 +58,6 @@ class VIEDataModule(pl.LightningDataModule):
             self.cfg.train.max_block_num,
             self.cfg.img_h,
             self.cfg.img_w,
-            mode="train",
         )
         data_loader = DataLoader(
             dataset,
@@ -74,6 +74,7 @@ class VIEDataModule(pl.LightningDataModule):
 
     def _get_val_test_loaders(self, mode):
         dataset = VIEDataset(
+            f"preprocessed_files_{mode}.txt",
             self.cfg.dataset,
             self.cfg.task,
             self.backbone_type,
@@ -84,7 +85,6 @@ class VIEDataModule(pl.LightningDataModule):
             self.cfg.train.max_block_num,
             self.cfg.img_h,
             self.cfg.img_w,
-            mode=mode,
         )
         # debug_by_visualization(0, dataset)
 
