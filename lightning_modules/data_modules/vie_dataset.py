@@ -50,10 +50,12 @@ class VIEDataset(Dataset):
             self.sep_token_id = self.tokenizer.sep_token_id
             self.unk_token_id = self.tokenizer.unk_token_id
 
-        if type(raw_files)=='str':
+        if type(raw_files)==str:
             self.examples = self._load_examples(raw_files)
         elif type(raw_files)==list:
             self.examples = raw_files
+        else:
+            ValueError("No examples could be loaded")
 
         self.class_names = get_class_names(self.dataset_root_path)
         self.class_idx_dic = dict(

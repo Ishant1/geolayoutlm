@@ -47,7 +47,7 @@ class VIEDataModule(pl.LightningDataModule):
         start_time = time.time()
 
         dataset = VIEDataset(
-            f"preprocessed_files_train.txt",
+            "preprocessed_files_train.txt",
             self.cfg.dataset,
             self.cfg.task,
             self.backbone_type,
