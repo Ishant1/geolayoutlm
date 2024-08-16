@@ -7,7 +7,7 @@ seed: 1
 cudnn_deterministic: False
 cudnn_benchmark: True
 dataset: floorplan
-dataset_root_path: /content/drive/MyDrive/GeoLayout/post
+dataset_root_path: /content/GeoLayout/post
 task: ee_el
 img_h: 768
 img_w: 768
