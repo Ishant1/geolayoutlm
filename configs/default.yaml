@@ -6,9 +6,9 @@ workspace: ./finetune
 dataset: funsd
 task: ee_el
 
-dataset_root_path: ./GeoLayoutLM/preprocess/funsd_el
+dataset_root_path: /content/drive/MyDrive/GeoLayout/post
 
-pretrained_model_path: C:/dev/models/pretrained_models
+pretrained_model_path: /content/drive/MyDrive/GeoLayout
 
 seed: 1
 cudnn_deterministic: False
@@ -16,7 +16,7 @@ cudnn_benchmark: True
 
 model:
   backbone: alibaba-damo/geolayoutlm-large-uncased
-  config_json: ./GeoLayoutLM/configs/GeoLayoutLM/GeoLayoutLM_large_model_config.json
+  config_json: ./configs/GeoLayoutLM/GeoLayoutLM_large_model_config.json
   head: vie
   n_classes: 7
 

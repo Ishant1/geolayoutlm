@@ -9,7 +9,7 @@ from pytorch_lightning.loggers.tensorboard import TensorBoardLogger
 from pytorch_lightning.plugins import DDPPlugin
 
 
-def get_config(default_conf_file="./configs/default.yaml"):
+def get_config(default_conf_file="./configs/finetune_funsd.yaml"):
     cfg = OmegaConf.load(default_conf_file)
 
     cfg_cli = _get_config_from_cli()
@@ -49,6 +49,9 @@ def _update_config(cfg):
     elif cfg.dataset == "cord":
         cfg.dataset_root_path = os.path.join(cfg.dataset_root_path, "cord_geo")
         cfg.model.n_classes = 2 * 22 + 1
+
+    elif cfg.dataset == 'floorplan':
+        cfg.model.n_classes = 2*2+1
 
     # set per-gpu batch size
     # num_devices = torch.cuda.device_count()
