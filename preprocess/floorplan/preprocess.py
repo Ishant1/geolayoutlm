@@ -5,7 +5,7 @@ from pathlib import Path
 from anls import anls_score
 import re
 
-from datasets.floorplan.schemas import OcrFileOutput, FloorplanEntity, FloorplanDocument, FloorplanSplitDocument
+from preprocess.floorplan.schemas import OcrFileOutput, FloorplanEntity, FloorplanDocument, FloorplanSplitDocument
 import numpy as np
 
 
@@ -154,7 +154,7 @@ def add_imagedir_to_json(dataset_dir):
             ValueError("Incorrect image root")
 
         with open(json_dir / json_file) as f:
-            json.dump(f, ocr_json)
+            json.dump(ocr_json, f)
 
 
 

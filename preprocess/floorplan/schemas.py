@@ -1,7 +1,6 @@
 from pydantic import BaseModel, field_validator, Field
 
-from datasets.schemas.document import Entity, LxdmDocument, LxdmSplitDocument
-from datasets.utils import combine_bbox
+from preprocess.floorplan.utils import combine_ocr_bbox
 
 
 class OcrTextOutout(BaseModel):
@@ -12,7 +11,7 @@ class OcrTextOutout(BaseModel):
     @field_validator("bbox", mode="before")
     def convert_bbox_into_four(cls, v):
         if isinstance(v[0], list):
-            v = combine_bbox(v)
+            v = combine_ocr_bbox(v)
         return v
 
 
@@ -24,16 +23,3 @@ class OcrFileOutput(BaseModel):
 class RoomInfo(BaseModel):
     name: str| None = None
     dimension: list[str]|str|None = None
-
-
-class FloorplanEntity(Entity):
-    total_area: float| None = Field(None, alias="total area")
-    rooms: list[RoomInfo]| None = None
-
-
-class FloorplanDocument(LxdmDocument):
-    entity: FloorplanEntity
-
-
-class FloorplanSplitDocument(LxdmSplitDocument):
-    entity: FloorplanEntity

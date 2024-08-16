@@ -98,13 +98,16 @@ class VIEDataset(Dataset):
         width = json_obj["meta"]["imageSize"]["width"]
         height = json_obj["meta"]["imageSize"]["height"]
 
-        image = cv2.imread(json_obj["meta"]["image_path"], 1)
-        image = image if type(image)==np.ndarray else np.asarray(Image.open(json_obj["meta"]["image_path"]).convert('RGB'))
+        image_path = json_obj["meta"]["image_path"]
+        if not os.path.exists(image_path):
+            ValueError(f"image at {image_path} doesn't exists")
+        image = cv2.imread(image_path, 1)
+        image = image if type(image)==np.ndarray else np.asarray(Image.open(image_path).convert('RGB'))
 
         image = cv2.resize(image, (self.img_w, self.img_h))
         image = image.astype("float32").transpose(2, 0, 1)
 
-        return_dict["image_path"] = json_obj["meta"]["image_path"]
+        return_dict["image_path"] = image_path
         return_dict["image"] = image
         return_dict["size_raw"] = np.array([width, height])
 

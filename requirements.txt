@@ -13,6 +13,7 @@ seqeval==1.2.2
 imagesize
 timm
 typer
+anls
 
 tensorboard>=2.2.0
 
