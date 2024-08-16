@@ -6,7 +6,7 @@ workspace: ./finetune
 dataset: funsd
 task: ee_el
 
-dataset_root_path: /content/drive/MyDrive/GeoLayout/post
+dataset_root_path: /content/GeoLayout/post
 
 pretrained_model_path: /content/drive/MyDrive/GeoLayout
 
