@@ -44,6 +44,8 @@ def finetune(
         device: Annotated[Optional[str], typer.Option("--device")] = None,
         data_dir: Annotated[Optional[str], typer.Option("--data-dir")] = "./GeoLayout",
         batch_size: Annotated[int, typer.Option("--batch-size")] = 2,
+        epochs: Annotated[int, typer.Option("--epochs")] = 20,
+
 ):
     if not os.path.exists(data_dir):
         get_huggingface_data(target_dir=data_dir)
@@ -53,6 +55,7 @@ def finetune(
     cfg["train"]["accelerator"] = device if device else cfg["train"]["accelerator"]
     cfg["dataset_root_path"] = os.path.join(data_dir, DATASET_SUB_DIR) if data_dir else cfg["dataset_root_path"]
     cfg["train"]["batch_size"] = batch_size if batch_size else cfg["train"]["batch_size"]
+    cfg["train"]["max_epochs"] = epochs if epochs else cfg["train"]["max_epochs"]
     print(cfg)
 
     os.environ["TOKENIZERS_PARALLELISM"] = "false"  # prevent deadlock with tokenizer

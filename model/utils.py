@@ -6,7 +6,12 @@ from git import Repo
 
 def setup_checkpoint(cfg, hub_id):
     git_repo = f"https://{hub_id.split('/')[0]}:{os.environ['HF_TOKEN']}@huggingface.co/{hub_id}"
-    repo = Repo.clone_from(git_repo, os.path.join(cfg.workspace, "checkpoints"))
+    checkpoint_dir = os.path.join(cfg.workspace, "checkpoints")
+    if not os.path.exists(checkpoint_dir):
+        repo = Repo.clone_from(git_repo, checkpoint_dir)
+    else:
+        repo = Repo(checkpoint_dir)
+
     return repo
 
 
