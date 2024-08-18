@@ -1,24 +1,18 @@
 import json
 import os
 
-import numpy as np
-
+from preprocess.floorplan.schemas import OcrFileOutput
 from pathlib import Path
 
 
 def save_ocr_result(
         filename: str,
-        ocr_results: dict
+        ocr_results: dict[str,OcrFileOutput]
 ) -> None:
     ocr_result_nested_dict = {i:v.dict() for i,v in ocr_results.items()}
 
     with open(filename, "w+") as f:
         json.dump(ocr_result_nested_dict, f)
-
-
-def combine_ocr_bbox(bboxes):
-    all_bboxes = np.array(bboxes)
-    return [all_bboxes[:,0].min(), all_bboxes[:,1].min(), all_bboxes[:,2].max(), all_bboxes[:,3].max()]
 
 
 def normalise_bbox(bbox, height, width):

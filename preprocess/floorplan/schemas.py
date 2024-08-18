@@ -1,6 +1,5 @@
+import numpy as np
 from pydantic import BaseModel, field_validator, Field
-
-from preprocess.floorplan.utils import combine_ocr_bbox
 
 
 class OcrTextOutout(BaseModel):
@@ -23,3 +22,8 @@ class OcrFileOutput(BaseModel):
 class RoomInfo(BaseModel):
     name: str| None = None
     dimension: list[str]|str|None = None
+
+
+def combine_ocr_bbox(bboxes):
+    all_bboxes = np.array(bboxes)
+    return [all_bboxes[:,0].min(), all_bboxes[:,1].min(), all_bboxes[:,2].max(), all_bboxes[:,3].max()]

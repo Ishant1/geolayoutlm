@@ -5,8 +5,8 @@ import pandas as pd
 import pytesseract
 from paddleocr import PaddleOCR
 
-from preprocess.floorplan.schemas import OcrTextOutout
-from preprocess.floorplan.utils import combine_ocr_bbox, normalise_bbox, join_block_and_words
+from preprocess.floorplan.schemas import OcrTextOutout, combine_ocr_bbox
+from preprocess.floorplan.utils import normalise_bbox, join_block_and_words
 
 OCR_ENGINE = r"C:\Users\iagg1\AppData\Local\Programs\Tesseract-OCR\tesseract.exe"
 
