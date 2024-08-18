@@ -57,5 +57,5 @@ def add_imagedir_to_json(dataset_dir):
         else:
             ValueError("Incorrect image root")
 
-        with open(json_dir / json_file) as f:
+        with open(json_dir / json_file, "w") as f:
             json.dump(ocr_json, f)
