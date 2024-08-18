@@ -18,7 +18,6 @@ app = typer.Typer()
 DATASET_SUB_DIR = "post"
 
 
-@app.command()
 def get_huggingface_data(
         dataset_name: Annotated[str, typer.Option("--input")] = "Aggish/goefloorplan",
         target_dir: Annotated[str, typer.Option("--input")] = "./GeoLayout",
