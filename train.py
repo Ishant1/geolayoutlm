@@ -1,5 +1,6 @@
 import os
 import subprocess
+from pathlib import Path
 from typing import Annotated, Optional
 
 import torch
@@ -23,6 +24,7 @@ def get_huggingface_data(
         target_dir: Annotated[str, typer.Option("--input")] = "./GeoLayout",
 ):
 
+    target_dir = Path(target_dir)
     subprocess.run([
         "huggingface-cli",
         "download",
@@ -31,7 +33,7 @@ def get_huggingface_data(
         "dataset",
         dataset_name,
         "--local-dir",
-        target_dir
+        target_dir.parent.as_posix()
     ]
     )
 
@@ -40,8 +42,7 @@ def get_huggingface_data(
 
 
 def finetune():
-    # if not os.path.exists(data_dir):
-    #     get_huggingface_data(target_dir=data_dir)
+
 
     cfg = get_config()
     # cfg["workspace"] = workspace if workspace else cfg["workspace"]
@@ -50,6 +51,9 @@ def finetune():
     # cfg["train"]["batch_size"] = batch_size if batch_size else cfg["train"]["batch_size"]
     # cfg["train"]["max_epochs"] = epochs if epochs else cfg["train"]["max_epochs"]
     print(cfg)
+
+    if not os.path.exists(cfg['dataset_root_path']):
+        get_huggingface_data(target_dir=cfg['dataset_root_path'])
 
     os.environ["TOKENIZERS_PARALLELISM"] = "false"  # prevent deadlock with tokenizer
     seed_everything(cfg.seed)
