@@ -91,7 +91,8 @@ class GeoLayoutLMVIEModule(BROSModule):
         if tb_logger:
             tb_logger.log_hyperparams(hparam_dict, self.f1_res)
 
-        push_model_to_hub(repo=self.repo, metric=r".*(linking).*\.pt")
+        if self.cfg.upload_strategy!='kaggle':
+            push_model_to_hub(self.cfg, repo=self.repo, metric=r".*(linking).*\.pt")
 
     @torch.no_grad()
     @overrides

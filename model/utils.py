@@ -29,6 +29,7 @@ def push_model_to_hub(repo: Repo, metric: str):
     if changed_files:
         repo.index.add(changed_files)
         repo.index.commit(commit_message)
+        print("pushing the code")
         repo.git.push()
 
 
