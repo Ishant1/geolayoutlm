@@ -1,5 +1,6 @@
 import os
 from typing import Annotated, Optional
+import subprocess
 
 import torch
 import typer
@@ -22,10 +23,17 @@ def get_huggingface_data(
         dataset_name: Annotated[str, typer.Option("--input")] = "Aggish/goefloorplan",
         target_dir: Annotated[str, typer.Option("--input")] = "./GeoLayout",
 ):
-    snapshot_download(
-        repo_id=dataset_name,
-        repo_type="dataset",
-        cache_dir=target_dir
+
+    subprocess.run([
+        "huggingface-cli",
+        "download",
+        "--resume-download",
+        "--repo-type",
+        "dataset",
+        dataset_name,
+        "--local-dir",
+        target_dir
+    ]
     )
 
     add_imagedir_to_json(os.path.join(target_dir,DATASET_SUB_DIR))
