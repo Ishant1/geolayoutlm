@@ -39,19 +39,16 @@ def get_huggingface_data(
 
 
 
-@app.command()
-def finetune(
-        **kwargs
-):
+def finetune():
     # if not os.path.exists(data_dir):
     #     get_huggingface_data(target_dir=data_dir)
 
     cfg = get_config()
-    cfg["workspace"] = workspace if workspace else cfg["workspace"]
-    cfg["train"]["accelerator"] = device if device else cfg["train"]["accelerator"]
-    cfg["dataset_root_path"] = os.path.join(data_dir, DATASET_SUB_DIR) if data_dir else cfg["dataset_root_path"]
-    cfg["train"]["batch_size"] = batch_size if batch_size else cfg["train"]["batch_size"]
-    cfg["train"]["max_epochs"] = epochs if epochs else cfg["train"]["max_epochs"]
+    # cfg["workspace"] = workspace if workspace else cfg["workspace"]
+    # cfg["train"]["accelerator"] = device if device else cfg["train"]["accelerator"]
+    # cfg["dataset_root_path"] = os.path.join(data_dir, DATASET_SUB_DIR) if data_dir else cfg["dataset_root_path"]
+    # cfg["train"]["batch_size"] = batch_size if batch_size else cfg["train"]["batch_size"]
+    # cfg["train"]["max_epochs"] = epochs if epochs else cfg["train"]["max_epochs"]
     print(cfg)
 
     os.environ["TOKENIZERS_PARALLELISM"] = "false"  # prevent deadlock with tokenizer
@@ -95,4 +92,4 @@ def finetune(
 
 
 if __name__ == "__main__":
-    app()
+    finetune()
