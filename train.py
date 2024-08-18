@@ -16,9 +16,6 @@ from utils import get_callbacks, get_config, get_loggers, get_plugins
 
 app = typer.Typer()
 
-DATASET_SUB_DIR = "post"
-
-
 def get_huggingface_data(
         dataset_name: Annotated[str, typer.Option("--input")] = "Aggish/goefloorplan",
         target_dir: Annotated[str, typer.Option("--input")] = "./GeoLayout",
@@ -37,7 +34,7 @@ def get_huggingface_data(
     ]
     )
 
-    add_imagedir_to_json(os.path.join(target_dir,DATASET_SUB_DIR))
+    add_imagedir_to_json(os.path.join(target_dir))
 
 
 
@@ -45,11 +42,6 @@ def finetune():
 
 
     cfg = get_config()
-    # cfg["workspace"] = workspace if workspace else cfg["workspace"]
-    # cfg["train"]["accelerator"] = device if device else cfg["train"]["accelerator"]
-    # cfg["dataset_root_path"] = os.path.join(data_dir, DATASET_SUB_DIR) if data_dir else cfg["dataset_root_path"]
-    # cfg["train"]["batch_size"] = batch_size if batch_size else cfg["train"]["batch_size"]
-    # cfg["train"]["max_epochs"] = epochs if epochs else cfg["train"]["max_epochs"]
     print(cfg)
 
     if not os.path.exists(cfg['dataset_root_path']):
