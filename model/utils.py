@@ -1,5 +1,7 @@
 import os
 import re
+from pathlib import Path
+import urllib.request
 
 from git import Repo
 
@@ -29,3 +31,9 @@ def push_model_to_hub(repo: Repo, metric: str):
         repo.index.commit(commit_message)
         repo.git.push()
 
+
+def get_pre_trained_model(cfg):
+    if not os.path.exists(cfg['model']['model_ckpt']):
+        parents = Path(cfg['model']['model_ckpt']).parent
+        parents.mkdir(parents=True)
+        urllib.request.urlretrieve(cfg['model']['base_url'], cfg['model']['model_ckpt'])

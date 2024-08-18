@@ -1,6 +1,6 @@
 import os
-from typing import Annotated, Optional
 import subprocess
+from typing import Annotated, Optional
 
 import torch
 import typer
@@ -9,8 +9,9 @@ from pytorch_lightning.utilities.seed import seed_everything
 
 from lightning_modules.data_modules.vie_data_module import VIEDataModule
 from lightning_modules.geolayoutlm_vie_module import GeoLayoutLMVIEModule
-from utils import get_callbacks, get_config, get_loggers, get_plugins
+from model.utils import get_pre_trained_model
 from preprocess.floorplan.utils import add_imagedir_to_json
+from utils import get_callbacks, get_config, get_loggers, get_plugins
 
 app = typer.Typer()
 
@@ -38,6 +39,7 @@ def get_huggingface_data(
     add_imagedir_to_json(os.path.join(target_dir,DATASET_SUB_DIR))
 
 
+
 @app.command()
 def finetune(
         workspace: Annotated[Optional[str] | None, typer.Option("--input")] = None,
@@ -60,6 +62,7 @@ def finetune(
 
     os.environ["TOKENIZERS_PARALLELISM"] = "false"  # prevent deadlock with tokenizer
     seed_everything(cfg.seed)
+    get_pre_trained_model(cfg)
 
     if cfg.model.head in ["vie"]:
         pl_module = GeoLayoutLMVIEModule(cfg)

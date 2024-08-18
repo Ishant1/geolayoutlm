@@ -15,7 +15,8 @@ img_w: 768
 model:
   backbone: alibaba-damo/geolayoutlm-large-uncased
   config_json: ./configs/GeoLayoutLM/GeoLayoutLM_large_model_config.json
-  model_ckpt: /content/drive/MyDrive/GeoLayout/geolayoutlm_large_pretrain.pt
+  model_ckpt: ./pre-trained/geolayoutlm_large_pretrain.pt
+  base_url: https://github.com/AlibabaResearch/AdvancedLiterateMachinery/releases/download/v1.1.0-geolayoutlm-model/geolayoutlm_large_pretrain.pt
   head: vie
   use_inner_id: true
   max_prob_as_father: true
