@@ -1,15 +1,51 @@
 import os
+from typing import Annotated
+
 import torch
+import typer
 from pytorch_lightning import Trainer
 from pytorch_lightning.utilities.seed import seed_everything
 
 from lightning_modules.data_modules.vie_data_module import VIEDataModule
 from lightning_modules.geolayoutlm_vie_module import GeoLayoutLMVIEModule
 from utils import get_callbacks, get_config, get_loggers, get_plugins
+from huggingface_hub import snapshot_download
+from preprocess.floorplan.utils import add_imagedir_to_json
+
+app = typer.Typer()
+
+DATASET_SUB_DIR = "post"
 
 
-def main():
+@app.command()
+def get_huggingface_data(
+        dataset_name: Annotated[str, typer.Option("--input")] = "Aggish/goefloorplan",
+        target_dir: Annotated[str, typer.Option("--input")] = "./GeoLayout",
+):
+    snapshot_download(
+        repo_id=dataset_name,
+        repo_type="dataset",
+        cache_dir=target_dir
+    )
+
+    add_imagedir_to_json(os.path.join(target_dir,DATASET_SUB_DIR))
+
+
+@app.command()
+def finetune(
+        workspace: Annotated[str | None, typer.Option("--input")] = None,
+        device: Annotated[str| None, typer.Option("--device")] = None,
+        data_dir: Annotated[str| None, typer.Option("--data-dir")] = "./GeoLayout",
+        batch_size: Annotated[int, typer.Option("--batch-size")] = 2,
+):
+    if not os.path.exists(data_dir):
+        get_huggingface_data(target_dir=data_dir)
+
     cfg = get_config()
+    cfg["workspace"] = workspace if workspace else cfg["workspace"]
+    cfg["train"]["accelerator"] = device if device else cfg["train"]["accelerator"]
+    cfg["dataset_root_path"] = os.path.join(data_dir, DATASET_SUB_DIR) if data_dir else cfg["dataset_root_path"]
+    cfg["train"]["batch_size"] = batch_size if batch_size else cfg["train"]["batch_size"]
     print(cfg)
 
     os.environ["TOKENIZERS_PARALLELISM"] = "false"  # prevent deadlock with tokenizer
@@ -52,4 +88,4 @@ def main():
 
 
 if __name__ == "__main__":
-    main()
+    app()

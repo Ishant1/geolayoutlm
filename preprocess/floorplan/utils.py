@@ -4,8 +4,7 @@ import os
 import numpy as np
 
 from preprocess.floorplan.schemas import OcrFileOutput
-
-from preprocess.floorplan.preprocess import match_labels_and_linking
+from pathlib import Path
 
 
 def save_ocr_result(
@@ -46,3 +45,24 @@ def load_ocr_from_file(filename: str | None) -> dict[str,OcrFileOutput]:
             ocr_results = json.load(f)
 
     return {i:OcrFileOutput.parse_obj(v) for i,v in ocr_results.items()}
+
+
+def add_imagedir_to_json(dataset_dir):
+    dataset_dir = Path(dataset_dir)
+    json_dir = dataset_dir/"preprocessed"
+    for json_file in os.listdir(json_dir):
+        with open(json_dir/json_file) as f:
+            ocr_json = json.load(f)
+        image_path = ocr_json["meta"]["image_path"]
+
+        if os.path.exists(image_path):
+            pass
+        elif os.path.exists(dataset_dir/image_path):
+            ocr_json["meta"]["image_path"] = (dataset_dir/image_path).as_posix()
+        elif os.path.exists(dataset_dir/"images"/image_path.name):
+            ocr_json["meta"]["image_path"] = (dataset_dir/"images"/image_path.name).as_posix()
+        else:
+            ValueError("Incorrect image root")
+
+        with open(json_dir / json_file) as f:
+            json.dump(ocr_json, f)
