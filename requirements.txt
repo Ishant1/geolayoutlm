@@ -15,6 +15,7 @@ timm
 typer
 anls
 pydantic
+gitpython
 
 tensorboard>=2.2.0
 

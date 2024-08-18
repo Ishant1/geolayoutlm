@@ -11,6 +11,7 @@ from seqeval.metrics import f1_score, precision_score, recall_score
 from transformers import BertTokenizer
 
 from lightning_modules.bros_module import BROSModule
+from model.utils import setup_checkpoint, push_model_to_hub
 from utils import get_class_names, cfg_to_hparams, get_specific_pl_logger
 
 TOKENIZER = BertTokenizer.from_pretrained("bert-base-uncased", do_lower_case=True)
@@ -37,6 +38,8 @@ class GeoLayoutLMVIEModule(BROSModule):
             "f1_labeling": (-1, 0.0),
             "f1_linking": (-1, 0.0),
         }
+
+        self.repo = setup_checkpoint(self.cfg, 'Aggish/geolayout-floorplan-pretrain')
 
     @overrides
     def training_step(self, batch, batch_idx, *args):
@@ -87,6 +90,8 @@ class GeoLayoutLMVIEModule(BROSModule):
 
         if tb_logger:
             tb_logger.log_hyperparams(hparam_dict, self.f1_res)
+
+        push_model_to_hub(repo=self.repo, metric=r".*(linking).*\.pt")
 
     @torch.no_grad()
     @overrides

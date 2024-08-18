@@ -10,7 +10,6 @@ from pytorch_lightning.utilities.seed import seed_everything
 from lightning_modules.data_modules.vie_data_module import VIEDataModule
 from lightning_modules.geolayoutlm_vie_module import GeoLayoutLMVIEModule
 from utils import get_callbacks, get_config, get_loggers, get_plugins
-from huggingface_hub import snapshot_download
 from preprocess.floorplan.utils import add_imagedir_to_json
 
 app = typer.Typer()
@@ -59,6 +58,11 @@ def finetune(
     os.environ["TOKENIZERS_PARALLELISM"] = "false"  # prevent deadlock with tokenizer
     seed_everything(cfg.seed)
 
+    if cfg.model.head in ["vie"]:
+        pl_module = GeoLayoutLMVIEModule(cfg)
+    else:
+        raise ValueError(f"Not supported head {cfg.model.head}")
+
     callbacks = get_callbacks(cfg)
     plugins = get_plugins(cfg)
     loggers = get_loggers(cfg)
@@ -83,11 +87,6 @@ def finetune(
         deterministic=cfg.cudnn_deterministic,
         limit_val_batches=cfg.val.limit_val_batches,
     )
-
-    if cfg.model.head in ["vie"]:
-        pl_module = GeoLayoutLMVIEModule(cfg)
-    else:
-        raise ValueError(f"Not supported head {cfg.model.head}")
 
     # import ipdb;ipdb.set_trace()
     data_module = VIEDataModule(cfg, pl_module.net.tokenizer)
