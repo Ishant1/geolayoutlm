@@ -41,15 +41,10 @@ def get_huggingface_data(
 
 @app.command()
 def finetune(
-        workspace: Annotated[Optional[str] | None, typer.Option("--input")] = None,
-        device: Annotated[Optional[str], typer.Option("--device")] = None,
-        data_dir: Annotated[Optional[str], typer.Option("--data-dir")] = "./GeoLayout",
-        batch_size: Annotated[int, typer.Option("--batch-size")] = 2,
-        epochs: Annotated[int, typer.Option("--epochs")] = 20,
-
+        **kwargs
 ):
-    if not os.path.exists(data_dir):
-        get_huggingface_data(target_dir=data_dir)
+    # if not os.path.exists(data_dir):
+    #     get_huggingface_data(target_dir=data_dir)
 
     cfg = get_config()
     cfg["workspace"] = workspace if workspace else cfg["workspace"]

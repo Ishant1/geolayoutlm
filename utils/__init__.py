@@ -26,14 +26,23 @@ def get_config(
 
     return cfg
 
+def _nested_set(dic, keys, value):
+    for key in keys[:-1]:
+        dic = dic.setdefault(key, {})
+    dic[keys[-1]] = value
+
 
 def _get_config_from_cli():
     cfg_cli = OmegaConf.from_cli()
-    print(cfg_cli)
     cli_keys = list(cfg_cli.keys())
     for cli_key in cli_keys:
         if "--" in cli_key:
-            cfg_cli[cli_key.replace("--", "")] = cfg_cli[cli_key]
+            new_key = cli_key.replace("--", "")
+            if "." in cli_key:
+                _nested_set(cfg_cli, new_key.split('.'), cfg_cli[cli_key])
+                del cfg_cli[cli_key]
+            else:
+                cfg_cli[new_key] = cfg_cli[cli_key]
             del cfg_cli[cli_key]
 
     return cfg_cli
