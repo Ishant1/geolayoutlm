@@ -133,8 +133,6 @@ def do_preprocess(
 
     preprocessed_fnames = []
     for json_file in tqdm(json_files):
-        if not json_file.endswith(".json"):
-            continue
         json_file = Path(json_file)
         json_name = json_file.name
         image_file = dataset_root_path/IMAGE_DIR/json_name.replace(".json",".jpeg")

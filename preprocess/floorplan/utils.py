@@ -44,6 +44,8 @@ def add_imagedir_to_json(dataset_dir):
     dataset_dir = Path(dataset_dir)
     json_dir = dataset_dir/"preprocessed"
     for json_file in os.listdir(json_dir):
+        if not json_file.endswith(".json"):
+            continue
         with open(json_dir/json_file) as f:
             ocr_json = json.load(f)
         image_path = ocr_json["meta"]["image_path"]
