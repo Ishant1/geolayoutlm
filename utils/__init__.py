@@ -9,7 +9,9 @@ from pytorch_lightning.loggers.tensorboard import TensorBoardLogger
 from pytorch_lightning.plugins import DDPPlugin
 
 
-def get_config(default_conf_file="./configs/finetune_funsd.yaml"):
+def get_config(
+        default_conf_file="./configs/finetune_funsd.yaml"
+):
     cfg = OmegaConf.load(default_conf_file)
 
     cfg_cli = _get_config_from_cli()
@@ -27,6 +29,7 @@ def get_config(default_conf_file="./configs/finetune_funsd.yaml"):
 
 def _get_config_from_cli():
     cfg_cli = OmegaConf.from_cli()
+    print(cfg_cli)
     cli_keys = list(cfg_cli.keys())
     for cli_key in cli_keys:
         if "--" in cli_key:
