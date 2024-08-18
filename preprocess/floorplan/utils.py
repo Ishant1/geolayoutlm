@@ -3,13 +3,12 @@ import os
 
 import numpy as np
 
-from preprocess.floorplan.schemas import OcrFileOutput
 from pathlib import Path
 
 
 def save_ocr_result(
         filename: str,
-        ocr_results: dict[str,OcrFileOutput]
+        ocr_results: dict
 ) -> None:
     ocr_result_nested_dict = {i:v.dict() for i,v in ocr_results.items()}
 
