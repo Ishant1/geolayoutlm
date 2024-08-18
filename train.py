@@ -1,5 +1,5 @@
 import os
-from typing import Annotated
+from typing import Annotated, Optional
 
 import torch
 import typer
@@ -33,9 +33,9 @@ def get_huggingface_data(
 
 @app.command()
 def finetune(
-        workspace: Annotated[str | None, typer.Option("--input")] = None,
-        device: Annotated[str| None, typer.Option("--device")] = None,
-        data_dir: Annotated[str| None, typer.Option("--data-dir")] = "./GeoLayout",
+        workspace: Annotated[Optional[str] | None, typer.Option("--input")] = None,
+        device: Annotated[Optional[str], typer.Option("--device")] = None,
+        data_dir: Annotated[Optional[str], typer.Option("--data-dir")] = "./GeoLayout",
         batch_size: Annotated[int, typer.Option("--batch-size")] = 2,
 ):
     if not os.path.exists(data_dir):
