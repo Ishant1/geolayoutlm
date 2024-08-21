@@ -8,6 +8,7 @@ from torch import nn
 
 from bros import BrosConfig, BrosTokenizer
 from bros import GeoLayoutLMModel, PairGeometricHead, MultiPairsGeometricHead
+from huggingface_hub import PyTorchModelHubMixin
 
 logging.basicConfig(
     stream=sys.stdout,
@@ -17,7 +18,10 @@ logging.basicConfig(
 logger = logging.getLogger(__name__)
 
 
-class GeoLayoutLMVIEModel(nn.Module):
+class GeoLayoutLMVIEModel(
+    nn.Module,
+    PyTorchModelHubMixin
+):
     def __init__(self, cfg):
         super().__init__()
 
