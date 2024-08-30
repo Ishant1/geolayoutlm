@@ -81,7 +81,7 @@ def process_eval_dataset(model: GeoLayoutLMVIEModel, eval_loader, eval_kwargs):
         result_head = convert_tensors_to_device(result, "cpu")
         data_obj = {i: v for i, v in data_obj.items() if i not in ["image", "el_labels_seq", "el_label_seq_mask"]}
         result_head["logits4labeling"] = torch.argmax(result_head["logits4labeling"], -1)
-        df_result = process_result_from_batch(model, result_head, data_obj, eval_kwargs)
+        df_result = process_result_from_batch(result_head, data_obj, eval_kwargs, model)
         ids = map(lambda x: x.split('/')[-1].split('.')[0], data_obj["image_path"])
         all_processed_results.update({i: v for i, v in zip(ids, df_result)})
 
