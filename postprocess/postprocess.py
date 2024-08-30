@@ -14,7 +14,7 @@ def process_result_from_batch(result_head, data_object, eval_kwargs, model) -> l
     for index in range(len(data_object["bio_labels"])):
         actuals = parse_str_from_seq(data_object["bio_labels"][index], data_object["are_box_first_tokens"][index],
                                      eval_kwargs["bio_class_names"])
-        predictions = parse_str_from_seq(result_head["Logits4labeling"][index],
+        predictions = parse_str_from_seq(result_head["logits4labeling"][index],
                                          data_object["are_box_first_tokens"][index], eval_kwargs["bio_class_names"])
         bboxes = list(map(get_largest_bbox,
                           create_bbox_token_list(data_object["bbox"][index], data_object["are_box_first_tokens"][index],
@@ -27,7 +27,7 @@ def process_result_from_batch(result_head, data_object, eval_kwargs, model) -> l
             pr_el_labels = torch.where(
                 prob_linking >= 0.5,
                 prob_linking,
-                torch.zeros_like(result_head["Logits4linking_list"][-1]))[index]
+                torch.zeros_like(result_head["logits4linking_list"][-1]))[index]
         else:
             pr_el_labels = result_head["pred4linking"][index]
         gt_relations, gt_s_memo, flag = parse_relations(
