@@ -31,4 +31,4 @@ class FloorplanEntity(BaseModel):
 
 def combine_ocr_bbox(bboxes):
     all_bboxes = np.array(bboxes)
-    return [all_bboxes[:,0].min(), all_bboxes[:,1].min(), all_bboxes[:,2].max(), all_bboxes[:,3].max()]
+    return [all_bboxes[:,0].min(), all_bboxes[:,1].min(), all_bboxes[:,0].max(), all_bboxes[:,1].max()]
