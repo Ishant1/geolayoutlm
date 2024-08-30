@@ -44,7 +44,7 @@ def process_result_from_batch(result_head, data_object, eval_kwargs, model) -> l
             pr_el_labels,
             data_object["first_token_idxes"][index],
             data_object["el_label_blk_mask"][index],
-            result_head["Logits4labeling"][index],
+            result_head["logits4labeling"][index],
             eval_kwargs["bio_class_names"],
             max_prob_as_father=result_head["max_prob_as_father"],
             max_prob_as_father_upperbound=result_head["max_prob_as_father_upperbound"],
