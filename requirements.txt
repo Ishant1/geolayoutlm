@@ -16,6 +16,8 @@ typer
 anls
 pydantic
 gitpython
+paddleocr
+paddlepaddle
 
 tensorboard>=2.2.0
 

@@ -40,7 +40,6 @@ def get_huggingface_data(
 
 def finetune():
 
-
     cfg = get_config()
     print(cfg)
 

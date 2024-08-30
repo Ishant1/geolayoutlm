@@ -24,6 +24,11 @@ class RoomInfo(BaseModel):
     dimension: list[str]|str|None = None
 
 
+class FloorplanEntity(BaseModel):
+    total_area: float| None = Field(None, alias="total area")
+    rooms: list[RoomInfo]| None = None
+
+
 def combine_ocr_bbox(bboxes):
     all_bboxes = np.array(bboxes)
     return [all_bboxes[:,0].min(), all_bboxes[:,1].min(), all_bboxes[:,2].max(), all_bboxes[:,3].max()]

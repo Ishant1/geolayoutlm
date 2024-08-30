@@ -5,7 +5,7 @@ from pathlib import Path
 from anls import anls_score
 import re
 
-from preprocess.floorplan.schemas import OcrFileOutput, FloorplanEntity, FloorplanDocument, FloorplanSplitDocument
+from preprocess.floorplan.schemas import FloorplanEntity
 import numpy as np
 
 
@@ -107,33 +107,6 @@ def match_labels_and_linking(tess_dict, related_labels=None):
     tess_dict.rename({'index': 'id'}, axis=1, inplace=True)
 
     return tess_dict.to_dict('records')
-
-
-def create_floorplan_document(
-        key: str,
-        document_ocr: OcrFileOutput | None = None,
-        entity: FloorplanEntity | None = None,
-) -> FloorplanDocument:
-    floorplan_document = FloorplanDocument(
-        key=key,
-        bbox= [ocr_output.bbox for ocr_output in document_ocr.ocr_result] if document_ocr else None,
-        word= [ocr_output.text for ocr_output in document_ocr.ocr_result] if document_ocr else None,
-        entity=entity
-    )
-
-    return floorplan_document
-
-
-def create_split_from_document(
-        document: FloorplanDocument
-) -> FloorplanSplitDocument:
-
-    floorplan_document_dict = document.dict()
-    floorplan_document_dict.update({'index': 0})
-    floorplan_split = FloorplanSplitDocument.parse_obj(
-        floorplan_document_dict
-    )
-    return floorplan_split
 
 
 def add_imagedir_to_json(dataset_dir):
