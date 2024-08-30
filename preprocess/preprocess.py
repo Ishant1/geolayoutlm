@@ -42,7 +42,7 @@ def convert_ocr_json_geojson(input_json: dict, tokenizer, classes, image_path: P
     out_json = dict(
         blocks={'first_token_idx_list': [], 'boxes': []},
         words=[],
-        parse={"class": {c: [] for c in classes}},
+        parse={"class": {c: [] for c in classes}, 'relations': []},
         relation=[],
         meta={
             "image_path": image_path.__str__(),
