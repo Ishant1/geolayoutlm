@@ -32,7 +32,7 @@ def get_input_from_image(
 
     return geojson_input
 
-def get_dataset(json_list, cfg, tokenizer):
+def get_dataset(json_list, cfg, tokenizer, classes):
 
     mode = 'val'
 
@@ -43,7 +43,8 @@ def get_dataset(json_list, cfg, tokenizer):
         "geolayoutlm",
         cfg.model.head,
         cfg.dataset_root_path,
-        tokenizer
+        tokenizer,
+        class_names=classes
     )
 
     batch_size = min(cfg[mode].batch_size, len(json_list))
@@ -71,5 +72,5 @@ def get_model_result(
     ocr_engine = get_ocr_engine()
     net = get_model_and_load_weights(cfg, model_path, cuda)
     json_lists = get_input_from_image(ocr_engine, image_paths, classes, net.tokenizer)
-    dataset = get_dataset(json_lists, cfg, net.tokenizer)
+    dataset = get_dataset(json_lists, cfg, net.tokenizer, classes=classes)
     return process_eval_dataset(net, dataset, eval_kwargs)

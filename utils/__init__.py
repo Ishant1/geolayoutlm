@@ -172,7 +172,7 @@ def get_eval_kwargs_geolayoutlm_vie(
     if not (dataset_root_path or classes):
         ValueError("Need to provide at least one of path or classes")
 
-    class_names = get_class_names(dataset_root_path) if dataset_root_path else classes
+    class_names = classes if classes else get_class_names(dataset_root_path)
     bio_class_names = ["O"]
     for class_name in class_names:
         if not class_name.startswith('O'):

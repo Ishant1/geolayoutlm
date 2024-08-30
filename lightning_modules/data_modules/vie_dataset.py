@@ -8,7 +8,7 @@ import numpy as np
 import torch
 from torch.utils.data.dataset import Dataset
 
-from utils import get_class_names
+from utils import get_class_names, get_eval_kwargs_geolayoutlm_vie
 
 
 class VIEDataset(Dataset):
@@ -25,6 +25,7 @@ class VIEDataset(Dataset):
         max_block_num=256,
         img_h=768,
         img_w=768,
+        class_names=None,
     ):
         self.dataset = dataset
         self.task = task
@@ -57,15 +58,12 @@ class VIEDataset(Dataset):
         else:
             ValueError("No examples could be loaded")
 
-        self.class_names = get_class_names(self.dataset_root_path)
-        self.class_idx_dic = dict(
-            [(class_name, idx) for idx, class_name in enumerate(self.class_names)]
-        )
+        self.class_names = class_names
+        # self.class_idx_dic = dict(
+        #     [(class_name, idx) for idx, class_name in enumerate(self.class_names)]
+        # )
 
-        self.bio_class_names = ["O"]
-        for class_name in self.class_names:
-            if not class_name.startswith('O'):
-                self.bio_class_names.extend([f"B-{class_name}", f"I-{class_name}"])
+        self.bio_class_names = get_eval_kwargs_geolayoutlm_vie(self.dataset_root_path, self.class_names)
         self.bio_class_idx_dic = dict(
             [
                 (bio_class_name, idx)
