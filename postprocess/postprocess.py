@@ -12,11 +12,17 @@ from postprocess.utils import get_largest_bbox, create_bbox_token_list, agg_labe
 def process_result_from_batch(result_head, data_object, eval_kwargs, model) -> list:
     processed_results = []
     for index in range(len(data_object["bio_labels"])):
-        actuals = parse_str_from_seq(data_object["bio_labels"][index], data_object ["are_box_first_tokens"][index], eval_kwargs["bio_class_names"])
-        predictions = parse_str_from_seq(result_head ["Logits4labeling"][index], data_object["are_box_first_tokens"][index], eval_kwargs["bio_class_names"])
-        bboxes = list(map(get_largest_bbox, create_bbox_token_list(data_object ["bbox"][index], data_object["are_box_first_tokens"][index], data_object["attention_mask"][index])))
-        words = list(map(model.tokenizer.decode, create_bbox_token_list(data_object["input_ids"][index], data_object["are_box_first_tokens"][index], data_object["attention_mask"][index])))
-        if result_head ["max_prob_as_father"]:
+        actuals = parse_str_from_seq(data_object["bio_labels"][index], data_object["are_box_first_tokens"][index],
+                                     eval_kwargs["bio_class_names"])
+        predictions = parse_str_from_seq(result_head["Logits4labeling"][index],
+                                         data_object["are_box_first_tokens"][index], eval_kwargs["bio_class_names"])
+        bboxes = list(map(get_largest_bbox,
+                          create_bbox_token_list(data_object["bbox"][index], data_object["are_box_first_tokens"][index],
+                                                 data_object["attention_mask"][index])))
+        words = list(map(model.tokenizer.decode, create_bbox_token_list(data_object["input_ids"][index],
+                                                                        data_object["are_box_first_tokens"][index],
+                                                                        data_object["attention_mask"][index])))
+        if result_head["max_prob_as_father"]:
             prob_linking = torch.sigmoid(result_head["logits4linking_list"][-1])[index]
             pr_el_labels = torch.where(
                 prob_linking >= 0.5,
@@ -30,7 +36,7 @@ def process_result_from_batch(result_head, data_object, eval_kwargs, model) -> l
             data_object["el_label_blk_mask"][index],
             data_object["bio_labels"][index],
             eval_kwargs["bio_class_names"],
-            max_prob_as_father= result_head["max_prob_as_father"],
+            max_prob_as_father=result_head["max_prob_as_father"],
             max_prob_as_father_upperbound=result_head["max_prob_as_father_upperbound"]
         )
 
@@ -40,8 +46,8 @@ def process_result_from_batch(result_head, data_object, eval_kwargs, model) -> l
             data_object["el_label_blk_mask"][index],
             result_head["Logits4labeling"][index],
             eval_kwargs["bio_class_names"],
-            max_prob_as_father = result_head["max_prob_as_father"],
-            max_prob_as_father_upperbound = result_head["max_prob_as_father_upperbound"],
+            max_prob_as_father=result_head["max_prob_as_father"],
+            max_prob_as_father_upperbound=result_head["max_prob_as_father_upperbound"],
         )
 
         ocr_info = pd.DataFrame({"words": words, "bbox": bboxes, "prediction": predictions, "actual": actuals})
@@ -73,15 +79,10 @@ def process_eval_dataset(model: GeoLayoutLMVIEModel, eval_loader, eval_kwargs):
         torch.cuda.empty_cache()
 
         result_head = convert_tensors_to_device(result, "cpu")
-        data_obj = {i:v for i,v in data_obj.items() if i not in ["image","el_labels_seq","el_label_seq_mask"]}
+        data_obj = {i: v for i, v in data_obj.items() if i not in ["image", "el_labels_seq", "el_label_seq_mask"]}
         result_head["logits4labeling"] = torch.argmax(result_head["logits4labeling"], -1)
-        df_result = process_result_from_batch(result_head, data_obj, eval_kwargs)
+        df_result = process_result_from_batch(model, result_head, data_obj, eval_kwargs)
         ids = map(lambda x: x.split('/')[-1].split('.')[0], data_obj["image_path"])
-        all_processed_results.update({i:v for i,v in zip(ids, df_result)})
+        all_processed_results.update({i: v for i, v in zip(ids, df_result)})
 
     return all_processed_results
-
-
-
-
-
