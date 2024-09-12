@@ -24,11 +24,11 @@ def load_model_weight(net, pretrained_model_file):
 
 
 def get_model_and_load_weights(cfg, pretrained_model_file=None, cuda=True, eval=True):
+    cfg.pretrained_model_file =  pretrained_model_file or cfg.pretrained_model_file
     net = get_model(cfg)
-
-    pretrained_model_file = cfg.pretrained_model_file if not pretrained_model_file else pretrained_model_file
-
-    load_model_weight(net, pretrained_model_file)
+    #
+    # load_model_weight(net, pretrained_model_file)
+    net.from_pretrained(cfg.pretrained_model_file)
 
     if cuda:
         net.to("cuda")
