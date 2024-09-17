@@ -6,6 +6,7 @@ from lightning_modules.data_modules.vie_dataset import VIEDataset
 from postprocess.postprocess import process_eval_dataset
 from preprocess.floorplan.ocr import OcrEngine
 from preprocess.floorplan.preprocess import match_labels_and_linking
+from preprocess.floorplan.utils import get_room_dm_pairs
 from preprocess.preprocess import convert_ocr_json_geojson
 from utils import get_config, get_eval_kwargs_geolayoutlm_vie
 from utils.load_model import get_model_and_load_weights
@@ -73,4 +74,5 @@ def get_model_result(
     net = get_model_and_load_weights(cfg, model_path, cuda)
     json_lists = get_input_from_image(ocr_engine, image_paths, classes, net.tokenizer)
     dataset = get_dataset(json_lists, cfg, net.tokenizer, classes=classes)
-    return process_eval_dataset(net, dataset, eval_kwargs)
+    processed_dfs = process_eval_dataset(net, dataset, eval_kwargs)
+    return {i: get_room_dm_pairs(df) for i,df in processed_dfs.items()}
