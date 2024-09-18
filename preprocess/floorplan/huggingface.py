@@ -44,9 +44,8 @@ def get_floorplan_images(house_df, image_dir = "images"):
         i,v = dict_item
         try:
             image_path = image_dir/f"{i}.jpeg"
-            if image_path.exists():
-                continue
-            get_image_from_url(v, image_path)
+            if not image_path.exists():
+                get_image_from_url(v, image_path)
             all_paths.append(image_path.__str__())
         except:
             continue
