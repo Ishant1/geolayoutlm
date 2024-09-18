@@ -87,8 +87,8 @@ def get_room(link_ids, results_df):
     return {"bbox": room_bbox, "name": room_name}
 
 def get_bbox_dis(bbox1, bbox2):
-    mean1 = np.array([np.mean(bbox1[0], bbox1[2]), np.mean(bbox1[1], bbox1[3])])
-    mean2 = np.array([np.mean(bbox2[0], bbox2[2]), np.mean(bbox2[1], bbox2[3])])
+    mean1 = np.array([np.mean([bbox1[0], bbox1[2]]), np.mean([bbox1[1], bbox1[3]])])
+    mean2 = np.array([np.mean([bbox2[0], bbox2[2]]), np.mean([bbox2[1], bbox2[3]])])
     return np.abs(np.linalg.norm(mean1-mean2))
 
 
