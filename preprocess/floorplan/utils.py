@@ -1,9 +1,11 @@
 import json
 import os
 import re
+from pathlib import Path
 from typing import Union
 
 import numpy as np
+import pandas as pd
 from pydantic import BaseModel, field_validator
 
 from preprocess.floorplan.schemas import OcrFileOutput, combine_ocr_bbox
@@ -27,11 +29,11 @@ def bbox_within(bbox_large, bbox_small,buffer=2):
     return bbox_large[0] <= bbox_small[0]+buffer and bbox_large[1]<=bbox_small[1]+buffer and bbox_large[2]>=bbox_small[2]-buffer and bbox_large[3]>=bbox_small[3]-buffer
 
 
-def get_dim(dim_ids, room_id, results_df, max_dis = 1000):
+def get_dim(dim_ids: list[int], room_id: int, results_df: pd.DataFrame, max_dis: int = 1000) -> dict:
     final_dis = {}
 
     for d in dim_ids:
-        dim_distance = get_bbox_dis(room_id.loc[room_id, 'bbox'], room_id.loc[d, 'bbox'])
+        dim_distance = get_bbox_dis(results_df.loc[room_id, 'bbox'], results_df.loc[d, 'bbox'])
         if dim_distance < max_dis:
             final_dis = {
                 "bbox": results_df.loc[d, "bbox"], "name": results_df.loc[d, "words"]
@@ -114,7 +116,6 @@ def get_room_dm_pairs(results_df):
             )
 
     return HouseRooms(rooms = pairs)
-
 
 
 def join_block_and_words(block_ocr, word_ocr):
