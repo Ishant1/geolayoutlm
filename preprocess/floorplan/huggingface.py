@@ -4,6 +4,8 @@ from datasets import load_dataset
 from huggingface_hub import HfApi, login
 import os
 
+from tqdm import tqdm
+
 from preprocess.floorplan.utils import get_image_from_url
 
 login(os.environ['HF_TOKEN'])
@@ -36,9 +38,12 @@ def get_floorplan_images(house_df, image_dir = "images"):
     floorplan_url = house_df.set_index("id")["floorplan_url"].to_dict()
     floorplan_url = {i:v for i,v in floorplan_url.items() if v}
     all_paths = []
-    for i, v in floorplan_url.items():
+    image_dir = Path(image_dir)
+    image_dir.mkdir(exist_ok=True)
+    for dict_item in tqdm(floorplan_url.items()):
+        i,v = dict_item
         try:
-            image_path = Path(image_dir)/f"{i}.jpeg"
+            image_path = image_dir/f"{i}.jpeg"
             get_image_from_url(v, image_path)
             all_paths.append(image_path)
         except:
