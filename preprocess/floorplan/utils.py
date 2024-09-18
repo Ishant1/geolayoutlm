@@ -7,6 +7,8 @@ from typing import Union
 import numpy as np
 import pandas as pd
 from pydantic import BaseModel, field_validator
+import urllib
+
 
 from preprocess.floorplan.schemas import OcrFileOutput, combine_ocr_bbox
 
@@ -156,3 +158,6 @@ def add_imagedir_to_json(dataset_dir):
 
         with open(json_dir / json_file, "w") as f:
             json.dump(ocr_json, f)
+
+def get_image_from_url(url, filename):
+    urllib.request.urlretrieve(url, filename)

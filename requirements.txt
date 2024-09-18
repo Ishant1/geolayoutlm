@@ -18,6 +18,8 @@ pydantic
 gitpython
 paddleocr
 paddlepaddle
+dataset
+pandas
 
 tensorboard>=2.2.0
 
