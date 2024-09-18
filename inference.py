@@ -1,7 +1,9 @@
+import json
 from pathlib import Path
 
 from torch.utils.data import DataLoader
 
+from bros import BrosTokenizer
 from lightning_modules.data_modules.vie_dataset import VIEDataset
 from postprocess.postprocess import process_eval_dataset
 from preprocess.floorplan.ocr import OcrEngine
@@ -62,17 +64,37 @@ def get_dataset(json_list, cfg, tokenizer, classes):
     return data_loader
 
 
+def get_ocr_input(
+    image_paths: Path | list[Path] | list[str],
+    classes: list[str],
+    write: str| None = None
+):
+    ocr_engine = get_ocr_engine()
+    tokenizer = BrosTokenizer.from_pretrained("bert-base-uncased", do_lower_case=True)
+    json_lists = get_input_from_image(ocr_engine, image_paths, classes, tokenizer)
+    if write:
+        with open(write, 'w+') as f:
+            json.dump(json_lists, f)
+    else:
+        return json_lists
+
+
 def get_model_result(
         image_paths: Path | list[Path] | list[str],
         model_path: Path,
         classes: list[str],
         cuda=True,
+        ocr_json: str | None = None
 ):
+    if not ocr_json:
+        json_lists = get_ocr_input(image_paths, classes)
+    else:
+        with open(ocr_json, "r") as f:
+            json_lists = json.load(f)
+
     cfg = get_config()
     eval_kwargs = get_eval_kwargs_geolayoutlm_vie(classes=classes)
-    ocr_engine = get_ocr_engine()
     net = get_model_and_load_weights(cfg, model_path, cuda)
-    json_lists = get_input_from_image(ocr_engine, image_paths, classes, net.tokenizer)
     dataset = get_dataset(json_lists, cfg, net.tokenizer, classes=classes)
     processed_dfs = process_eval_dataset(net, dataset, eval_kwargs)
     return {i: get_room_dm_pairs(df) for i,df in processed_dfs.items()}
