@@ -1,6 +1,6 @@
 import torch
 
-from model import get_model
+from model import get_model, GeoLayoutLMVIEModel
 
 
 def load_model_weight(net, pretrained_model_file):
@@ -24,11 +24,11 @@ def load_model_weight(net, pretrained_model_file):
 
 
 def get_model_and_load_weights(cfg, pretrained_model_file=None, cuda=True, eval=True):
-    cfg.pretrained_model_file =  pretrained_model_file or cfg.pretrained_model_file
-    net = get_model(cfg)
+    cfg.pretrained_model_file = pretrained_model_file or cfg.pretrained_model_file
+    # net = get_model(cfg)
     #
     # load_model_weight(net, pretrained_model_file)
-    net.from_pretrained(cfg.pretrained_model_file)
+    net = GeoLayoutLMVIEModel.from_pretrained(cfg.pretrained_model_file, cfg=cfg)
 
     if cuda:
         net.to("cuda")
