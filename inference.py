@@ -2,6 +2,7 @@ import json
 from pathlib import Path
 
 from torch.utils.data import DataLoader
+from tqdm import tqdm
 
 from bros import BrosTokenizer
 from lightning_modules.data_modules.vie_dataset import VIEDataset
@@ -26,8 +27,9 @@ def get_input_from_image(
 ):
 
     image = image if type(image)==list else [image]
-
-    ocr_df = list(map(lambda x: ocr_engine.get_result_from_a_file(x, block=True), image))
+    ocr_df = []
+    for img in tqdm(image):
+        ocr_df.append(ocr_engine.get_result_from_a_file(img, block=True))
     ocr_labels = list(map(match_labels_and_linking, ocr_df))
     geojson_input = []
     for ocr, img in zip(ocr_labels, image):

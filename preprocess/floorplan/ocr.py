@@ -24,8 +24,8 @@ class OcrEngine:
         self.setup_ocr()
 
     def setup_ocr(self) -> None:
-        self.engine = PaddleOCR(use_angle_cls=True, lang='en', det_lang='ml')
-        self.engine_block = PaddleOCR(use_angle_cls=True, lang='en', det_lang=None)
+        self.engine = PaddleOCR(use_angle_cls=True, lang='en', det_lang='ml', debug=False)
+        self.engine_block = PaddleOCR(use_angle_cls=True, lang='en', det_lang=None, debug=False)
         # pytesseract.pytesseract.tesseract_cmd = OCR_ENGINE
 
     @staticmethod
