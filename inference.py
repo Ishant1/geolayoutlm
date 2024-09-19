@@ -100,7 +100,7 @@ def get_model_result(
     cfg = get_config()
     eval_kwargs = get_eval_kwargs_geolayoutlm_vie(classes=classes)
     net = get_model_and_load_weights(cfg, model_path, cuda)
-    model_existing_outputs = load_json(write) if write else {}
+    model_existing_outputs = load_json(write) if write and os.path.exists(write) else {}
     json_lists = {i:v for i,v in json_lists.items() if i not in model_existing_outputs}
     dataset = get_dataset(json_lists.values(), cfg, net.tokenizer, classes=classes)
     processed_dfs = process_eval_dataset(net, dataset, eval_kwargs)
