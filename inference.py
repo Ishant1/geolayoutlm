@@ -106,6 +106,7 @@ def get_model_result(
     processed_dfs = process_eval_dataset(net, dataset, eval_kwargs)
     dict_result = {i: get_room_dm_pairs(df) for i,df in processed_dfs.items()}
     if write:
+        dict_result = {i: v.json() for i,v in dict_result}
         write_json(dict_result, write, True)
     else:
         return model_existing_outputs| dict_result
