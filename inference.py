@@ -102,7 +102,7 @@ def get_model_result(
     net = get_model_and_load_weights(cfg, model_path, cuda)
     model_existing_outputs = load_json(write) if write and os.path.exists(write) else {}
     json_lists = {i:v for i,v in json_lists.items() if i not in model_existing_outputs}
-    dataset = get_dataset(json_lists.values(), cfg, net.tokenizer, classes=classes)
+    dataset = get_dataset(list(json_lists.values()), cfg, net.tokenizer, classes=classes)
     processed_dfs = process_eval_dataset(net, dataset, eval_kwargs)
     dict_result = {i: get_room_dm_pairs(df) for i,df in processed_dfs.items()}
     if write:
