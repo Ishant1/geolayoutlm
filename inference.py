@@ -27,12 +27,15 @@ def get_input_from_image(
 ):
 
     image = image if type(image)==list else [image]
-    ocr_df = []
+    ocr_df = {}
     for img in tqdm(image):
-        ocr_df.append(ocr_engine.get_result_from_a_file(img, block=True))
-    ocr_labels = list(map(match_labels_and_linking, ocr_df))
+        try:
+            ocr_df[img] = ocr_engine.get_result_from_a_file(img, block=True)
+        except:
+            continue
+    ocr_labels = {i: match_labels_and_linking(v) for i,v in ocr_df.items()}
     geojson_input = []
-    for ocr, img in zip(ocr_labels, image):
+    for img, ocr in ocr_labels.items():
         geojson_input.append(convert_ocr_json_geojson(ocr, tokenizer, classes, img))
 
     return geojson_input
