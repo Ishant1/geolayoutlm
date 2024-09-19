@@ -1,4 +1,5 @@
 import json
+import os.path
 from pathlib import Path
 
 from torch.utils.data import DataLoader
@@ -74,9 +75,15 @@ def get_ocr_input(
     classes: list[str],
     write: str| None = None
 ):
+    existing_ocr = []
+    if write:
+        if os.path.exists(write):
+            with open(write, 'r') as f:
+                existing_ocr.extend(json.load(f))
     ocr_engine = get_ocr_engine()
     tokenizer = BrosTokenizer.from_pretrained("bert-base-uncased", do_lower_case=True)
     json_lists = get_input_from_image(ocr_engine, image_paths, classes, tokenizer)
+    json_lists = existing_ocr + json_lists
     if write:
         with open(write, 'w+') as f:
             json.dump(json_lists, f)
