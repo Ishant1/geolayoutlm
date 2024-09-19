@@ -14,6 +14,7 @@ from preprocess.floorplan.utils import get_room_dm_pairs
 from preprocess.preprocess import convert_ocr_json_geojson
 from utils import get_config, get_eval_kwargs_geolayoutlm_vie
 from utils.load_model import get_model_and_load_weights
+from utils.util import write_json, load_json
 
 
 def get_ocr_engine():
@@ -75,20 +76,16 @@ def get_ocr_input(
     classes: list[str],
     write: str| None = None
 ):
-    existing_ocr = []
-    if write:
-        if os.path.exists(write):
-            with open(write, 'r') as f:
-                existing_ocr.extend(json.load(f))
+    json_inputs = load_json(write) if write else {}
+    image_paths = list(filter(lambda x: Path(x).stem not in json_inputs, image_paths))
     ocr_engine = get_ocr_engine()
     tokenizer = BrosTokenizer.from_pretrained("bert-base-uncased", do_lower_case=True)
     json_lists = get_input_from_image(ocr_engine, image_paths, classes, tokenizer)
-    json_lists = existing_ocr + json_lists
+    json_obj = {Path(v["meta"]["image_path"]).stem: v for v in json_lists}
     if write:
-        with open(write, 'w+') as f:
-            json.dump(json_lists, f)
+        write_json(json_obj, write, True)
     else:
-        return json_lists
+        return json_inputs | json_obj
 
 
 def get_model_result(
@@ -96,17 +93,19 @@ def get_model_result(
         model_path: Path,
         classes: list[str],
         cuda=True,
-        ocr_json: str | None = None
+        ocr_json: dict | None = None,
+        write = str | None,
 ):
-    if not ocr_json:
-        json_lists = get_ocr_input(image_paths, classes)
-    else:
-        with open(ocr_json, "r") as f:
-            json_lists = json.load(f)
-
+    json_lists = ocr_json or get_ocr_input(image_paths, classes)
     cfg = get_config()
     eval_kwargs = get_eval_kwargs_geolayoutlm_vie(classes=classes)
     net = get_model_and_load_weights(cfg, model_path, cuda)
-    dataset = get_dataset(json_lists, cfg, net.tokenizer, classes=classes)
+    model_existing_outputs = load_json(write) if write else {}
+    json_lists = {i:v for i,v in json_lists.items() if i not in model_existing_outputs}
+    dataset = get_dataset(json_lists.values(), cfg, net.tokenizer, classes=classes)
     processed_dfs = process_eval_dataset(net, dataset, eval_kwargs)
-    return {i: get_room_dm_pairs(df) for i,df in processed_dfs.items()}
+    dict_result = {i: get_room_dm_pairs(df) for i,df in processed_dfs.items()}
+    if write:
+        write_json(dict_result, write, True)
+    else:
+        return model_existing_outputs| dict_result

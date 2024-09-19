@@ -2,12 +2,15 @@
 import itertools
 import json
 import os
+from pathlib import Path
+
 import cv2
 from PIL import Image
 import numpy as np
 import torch
 from torch.utils.data.dataset import Dataset
 
+from preprocess.floorplan.utils import get_image_from_url
 from utils import get_class_names, get_eval_kwargs_geolayoutlm_vie
 
 
@@ -98,7 +101,11 @@ class VIEDataset(Dataset):
 
         image_path = json_obj["meta"]["image_path"]
         if not os.path.exists(image_path):
-            ValueError(f"image at {image_path} doesn't exists")
+            try:
+                Path(json_obj["meta"]["image_path"]).parent.mkdir(parents=True, exist_ok=True)
+                get_image_from_url(json_obj["meta"]["url"], json_obj["meta"]["image_path"])
+            except:
+                ValueError(f"image at {image_path} doesn't exists, neither we can download it")
         image = cv2.imread(image_path, 1)
         image = image if type(image)==np.ndarray else np.asarray(Image.open(image_path).convert('RGB'))
 
