@@ -1,5 +1,6 @@
 from pathlib import Path
 
+import pandas as pd
 from datasets import load_dataset
 from huggingface_hub import HfApi, login
 import os
@@ -10,6 +11,9 @@ from preprocess.floorplan.utils import get_image_from_url
 
 login(os.environ['HF_TOKEN'])
 hf = HfApi()
+
+INDEX_FILENAME = "index.csv"
+HOUSING_FILENAME = "housing-data.csv"
 
 def upload_data_to_hf(dir, repo_id):
     hf.upload_folder(
@@ -27,19 +31,18 @@ def download_hf_dataset(dir, repo_id):
     )
 
 
-def load_hf_dataset(repo_id):
-    houses = load_dataset(path=repo_id, name="houses", split='train')
-    index = load_dataset(path=repo_id, name="index", split='train')
+def load_hf_dataset(local_dir):
+    local_dir = Path(local_dir)
+    houses = pd.read_csv(local_dir/HOUSING_FILENAME, engine="python")
+    index = pd.read_csv(local_dir/INDEX_FILENAME, engine="python")
     return houses, index
 
 
-def get_floorplan_images(house_df, image_dir = "images"):
-    house_df = house_df.loc[~house_df["floorplan_url"].isnull(), :]
-    floorplan_url = house_df.set_index("id")["floorplan_url"].to_dict()
-    floorplan_url = {i:v for i,v in floorplan_url.items() if v}
-    all_paths = []
+def get_floorplan_images(floorplan_url, image_dir = "images"):
     image_dir = Path(image_dir)
     image_dir.mkdir(exist_ok=True)
+
+    all_paths = []
     for dict_item in tqdm(floorplan_url.items()):
         i,v = dict_item
         try:

@@ -8,6 +8,7 @@ from tqdm import tqdm
 from bros import BrosTokenizer
 from lightning_modules.data_modules.vie_dataset import VIEDataset
 from postprocess.postprocess import process_eval_dataset
+from preprocess.floorplan.huggingface import get_floorplan_images
 from preprocess.floorplan.ocr import OcrEngine
 from preprocess.floorplan.preprocess import match_labels_and_linking
 from preprocess.floorplan.utils import get_room_dm_pairs
@@ -72,16 +73,20 @@ def get_dataset(json_list, cfg, tokenizer, classes):
 
 
 def get_ocr_input(
-    image_paths: Path | list[Path] | list[str],
+    image_paths: dict[str, str],
     classes: list[str],
     write: str| None = None
 ):
     json_inputs = load_json(write) if write else {}
-    image_paths = list(filter(lambda x: Path(x).stem not in json_inputs, image_paths))
+    image_paths = {i:v for i,v in image_paths.items() if i not in json_inputs}
+    image_local_paths = get_floorplan_images(image_paths)
     ocr_engine = get_ocr_engine()
     tokenizer = BrosTokenizer.from_pretrained("bert-base-uncased", do_lower_case=True)
-    json_lists = get_input_from_image(ocr_engine, image_paths, classes, tokenizer)
+    json_lists = get_input_from_image(ocr_engine, image_local_paths, classes, tokenizer)
     json_obj = {Path(v["meta"]["image_path"]).stem: v for v in json_lists}
+    for i in json_obj:
+        json_obj[i]['meta']['url'] = image_paths[i]
+
     if write:
         write_json(json_obj, write, True)
     else:
