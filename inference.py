@@ -78,19 +78,22 @@ def get_ocr_input(
     write: str| None = None
 ):
     json_inputs = load_json(write) if write else {}
-    image_paths = {i:v for i,v in image_paths.items() if i not in json_inputs}
-    image_local_paths = get_floorplan_images(image_paths)
+    json_obj = {i: json_inputs[i] for i in image_paths if i in json_inputs}
+    no_ocr_image_paths = {i: v for i,v in image_paths.items() if i not in json_inputs}
+    del(json_inputs)
+    image_local_paths = get_floorplan_images(no_ocr_image_paths)
     ocr_engine = get_ocr_engine()
     tokenizer = BrosTokenizer.from_pretrained("bert-base-uncased", do_lower_case=True)
     json_lists = get_input_from_image(ocr_engine, image_local_paths, classes, tokenizer)
-    json_obj = {Path(v["meta"]["image_path"]).stem: v for v in json_lists}
-    for i in json_obj:
-        json_obj[i]['meta']['url'] = image_paths[i]
+    for v in json_lists:
+        image_key = Path(v["meta"]["image_path"]).stem
+        v['meta']['url'] = image_paths[image_key]
+        json_obj[image_key] = v
 
     if write:
         write_json(json_obj, write, True)
     else:
-        return json_inputs | json_obj
+        return json_obj
 
 
 def get_model_result(
