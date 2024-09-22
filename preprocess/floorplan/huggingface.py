@@ -12,7 +12,7 @@ from preprocess.floorplan.utils import get_image_from_url
 login(os.environ['HF_TOKEN'])
 hf = HfApi()
 
-INDEX_FILENAME = "index.csv"
+INDEX_FILENAME = "index_df.csv"
 HOUSING_FILENAME = "housing-data.csv"
 
 def upload_data_to_hf(dir, repo_id):
