@@ -101,10 +101,10 @@ def get_model_result(
         model_path: Path,
         classes: list[str],
         cuda=True,
-        ocr_json_path: str | Path | None = None,
-        write=str | None,
+        ocr_json: dict | None = None,
+        write = str | None,
 ):
-    json_lists = get_ocr_input(image_paths, classes, ocr_json_path)
+    json_lists = ocr_json or get_ocr_input(image_paths, classes)
     cfg = get_config()
     eval_kwargs = get_eval_kwargs_geolayoutlm_vie(classes=classes)
     net = get_model_and_load_weights(cfg, model_path, cuda)
