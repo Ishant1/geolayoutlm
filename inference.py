@@ -92,29 +92,32 @@ def get_ocr_input(
 
     if write:
         write_json(json_obj, write, True)
-    else:
-        return json_obj
+
+    return json_obj
 
 
 def get_model_result(
-        image_paths: Path | list[Path] | list[str],
+        image_paths: dict[str, str],
         model_path: Path,
         classes: list[str],
         cuda=True,
-        ocr_json: dict | None = None,
-        write = str | None,
+        ocr_json_path: str | Path | None = None,
+        write=str | None,
 ):
-    json_lists = ocr_json or get_ocr_input(image_paths, classes)
+    json_lists = get_ocr_input(image_paths, classes, ocr_json_path)
     cfg = get_config()
     eval_kwargs = get_eval_kwargs_geolayoutlm_vie(classes=classes)
     net = get_model_and_load_weights(cfg, model_path, cuda)
     model_existing_outputs = load_json(write) if write and os.path.exists(write) else {}
     json_lists = {i:v for i,v in json_lists.items() if i not in model_existing_outputs}
-    dataset = get_dataset(list(json_lists.values()), cfg, net.tokenizer, classes=classes)
-    processed_dfs = process_eval_dataset(net, dataset, eval_kwargs)
-    dict_result = {i: get_room_dm_pairs(df) for i,df in processed_dfs.items()}
+    dict_result = {}
+    if json_lists:
+        dataset = get_dataset(list(json_lists.values()), cfg, net.tokenizer, classes=classes)
+        processed_dfs = process_eval_dataset(net, dataset, eval_kwargs)
+        dict_result = {i: get_room_dm_pairs(df) for i,df in processed_dfs.items()}
+
     if write:
         dict_result = {i: v.json() for i,v in dict_result.items()}
         write_json(dict_result, write, True)
-    else:
-        return model_existing_outputs| dict_result
+
+    return model_existing_outputs| dict_result
