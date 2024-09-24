@@ -8,7 +8,7 @@ from tqdm import tqdm
 from bros import BrosTokenizer
 from lightning_modules.data_modules.vie_dataset import VIEDataset
 from postprocess.postprocess import process_eval_dataset
-from preprocess.floorplan.huggingface import get_floorplan_images
+from preprocess.floorplan.huggingface import get_floorplan_images, get_floorplan_images_with_path
 from preprocess.floorplan.ocr import OcrEngine
 from preprocess.floorplan.preprocess import match_labels_and_linking
 from preprocess.floorplan.utils import get_room_dm_pairs
@@ -112,6 +112,7 @@ def get_model_result(
     json_lists = {i:v for i,v in json_lists.items() if i not in model_existing_outputs}
     dict_result = {}
     if json_lists:
+        get_floorplan_images_with_path(json_lists)
         dataset = get_dataset(list(json_lists.values()), cfg, net.tokenizer, classes=classes)
         processed_dfs = process_eval_dataset(net, dataset, eval_kwargs)
         dict_result = {i: get_room_dm_pairs(df) for i,df in processed_dfs.items()}
