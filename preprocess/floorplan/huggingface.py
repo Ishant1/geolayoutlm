@@ -56,8 +56,15 @@ def get_floorplan_images(floorplan_url, image_dir = "images"):
 
 
 def get_floorplan_images_with_path(ocr_dict):
+    final_dict = {}
     for i,v in ocr_dict.items():
         image_path = Path(v["meta"]["image_path"])
-        if not image_path.exists():
-            image_path.parent.mkdir(exist_ok=True)
-            get_image_from_url(v["meta"]["url"], image_path.__str__())
+        image_path.parent.mkdir(exist_ok=True)
+        try:
+            if not image_path.exists():
+                get_image_from_url(v["meta"]["url"], image_path.__str__())
+            final_dict |= {i:v}
+        except:
+            continue
+    return final_dict
+
