@@ -8,6 +8,7 @@ import numpy as np
 import pandas as pd
 from pydantic import BaseModel, field_validator
 import urllib
+from time import time
 
 
 from preprocess.floorplan.schemas import OcrFileOutput, combine_ocr_bbox
@@ -161,3 +162,35 @@ def add_imagedir_to_json(dataset_dir):
 
 def get_image_from_url(url, filename):
     urllib.request.urlretrieve(url, filename)
+
+
+class Counter:
+    def __init__(self, iterator, log_at):
+        self.object = iterator
+        self.total_length = len(self.object)
+        self.count = 0
+        self.log_at = int(self.total_length*log_at) if log_at < 1 else log_at
+        self.total_time = 0
+        self.counter_time = 0
+
+    def __iter__(self):
+        self.index = 0
+        self.counter_time = time()
+        return self
+
+    def __next__(self):
+        if self.count==self.total_length:
+            self.count=0
+            raise StopIteration
+        item = self.object[self.index]
+        self.total_time += time() - self.counter_time
+        self.counter_time = time()
+        self.count += 1
+        if self.count % self.log_at == 0:
+            print(
+                f"Completed {self.count} iterations out of {self.total_length}: {(self.total_time/self.count):.2f}s per iter | {self.total_time:.2f}s total time"
+            )
+        return item
+
+
+

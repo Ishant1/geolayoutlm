@@ -11,7 +11,7 @@ from postprocess.postprocess import process_eval_dataset
 from preprocess.floorplan.huggingface import get_floorplan_images, get_floorplan_images_with_path
 from preprocess.floorplan.ocr import OcrEngine
 from preprocess.floorplan.preprocess import match_labels_and_linking
-from preprocess.floorplan.utils import get_room_dm_pairs
+from preprocess.floorplan.utils import get_room_dm_pairs, Counter
 from preprocess.preprocess import convert_ocr_json_geojson
 from utils import get_config, get_eval_kwargs_geolayoutlm_vie
 from utils.load_model import get_model_and_load_weights
@@ -31,7 +31,7 @@ def get_input_from_image(
 
     image = image if type(image)==list else [image]
     ocr_df = {}
-    for img in tqdm(image):
+    for img in Counter(image, log_at=0.1):
         try:
             ocr_df[img] = ocr_engine.get_result_from_a_file(img, block=True)
         except:

@@ -7,7 +7,7 @@ import os
 
 from tqdm import tqdm
 
-from preprocess.floorplan.utils import get_image_from_url
+from preprocess.floorplan.utils import get_image_from_url, Counter
 
 login(os.environ['HF_TOKEN'])
 hf = HfApi()
@@ -38,12 +38,12 @@ def load_hf_dataset(local_dir):
     return houses, index
 
 
-def get_floorplan_images(floorplan_url, image_dir = "images"):
+def get_floorplan_images(floorplan_url, image_dir="images"):
     image_dir = Path(image_dir)
     image_dir.mkdir(exist_ok=True)
 
     all_paths = []
-    for dict_item in tqdm(floorplan_url.items()):
+    for dict_item in Counter(floorplan_url.items(), log_at=0.1):
         i,v = dict_item
         try:
             image_path = image_dir/f"{i}.jpeg"
