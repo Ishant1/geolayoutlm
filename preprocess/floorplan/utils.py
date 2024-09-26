@@ -169,7 +169,7 @@ class Counter:
         self.object = object
         self.total_length = len(self.object)
         self.count = 0
-        self.log_at = int(self.total_length*log_at) if log_at < 1 else log_at
+        self.log_at = int(self.total_length*log_at)+1 if log_at < 1 else log_at
         self.total_time = 0
         self.counter_time = 0
 
