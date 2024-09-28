@@ -165,24 +165,24 @@ def get_image_from_url(url, filename):
 
 
 class Counter:
-    def __init__(self, iterator, log_at):
-        self.object = iterator
+    def __init__(self, object, log_at):
+        self.object = object
         self.total_length = len(self.object)
         self.count = 0
-        self.log_at = int(self.total_length*log_at) if log_at < 1 else log_at
+        self.log_at = int(self.total_length*log_at)+1 if log_at < 1 else log_at
         self.total_time = 0
         self.counter_time = 0
 
     def __iter__(self):
-        self.index = 0
         self.counter_time = time()
+        self.object = iter(self.object)
         return self
 
     def __next__(self):
         if self.count==self.total_length:
             self.count=0
             raise StopIteration
-        item = self.object[self.index]
+        item = next(self.object)
         self.total_time += time() - self.counter_time
         self.counter_time = time()
         self.count += 1
