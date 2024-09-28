@@ -43,8 +43,7 @@ def get_floorplan_images(floorplan_url, image_dir="images"):
     image_dir.mkdir(exist_ok=True)
 
     all_paths = []
-    for dict_item in Counter(floorplan_url.items(), log_at=0.1):
-        i,v = dict_item
+    for i,v in floorplan_url.items():
         try:
             image_path = image_dir/f"{i}.jpeg"
             if not image_path.exists():
