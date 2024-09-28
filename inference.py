@@ -77,11 +77,8 @@ def get_ocr_input(
     classes: list[str],
     write: str| None = None
 ):
-    json_inputs = load_json(write) if write else {}
-    json_obj = {i: json_inputs[i] for i in image_paths if i in json_inputs}
-    no_ocr_image_paths = {i: v for i,v in image_paths.items() if i not in json_inputs}
-    del(json_inputs)
-    image_local_paths = get_floorplan_images(no_ocr_image_paths)
+    json_obj = {}
+    image_local_paths = get_floorplan_images(image_paths)
     ocr_engine = get_ocr_engine()
     tokenizer = BrosTokenizer.from_pretrained("bert-base-uncased", do_lower_case=True)
     json_lists = get_input_from_image(ocr_engine, image_local_paths, classes, tokenizer)
