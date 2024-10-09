@@ -28,23 +28,22 @@ def get_input_from_image(
         classes: list[str],
         tokenizer
 ):
-
-    image = image if type(image)==list else [image]
+    image = image if type(image) == list else [image]
     ocr_df = {}
     for img in Counter(image, log_at=0.1):
         try:
             ocr_df[img] = ocr_engine.get_result_from_a_file(img, block=True)
         except:
             continue
-    ocr_labels = {i: match_labels_and_linking(v) for i,v in ocr_df.items()}
+    ocr_labels = {i: match_labels_and_linking(v) for i, v in ocr_df.items()}
     geojson_input = []
     for img, ocr in ocr_labels.items():
         geojson_input.append(convert_ocr_json_geojson(ocr, tokenizer, classes, img))
 
     return geojson_input
 
-def get_dataset(json_list, cfg, tokenizer, classes):
 
+def get_dataset(json_list, cfg, tokenizer, classes):
     mode = 'val'
 
     dataset = VIEDataset(
@@ -73,9 +72,9 @@ def get_dataset(json_list, cfg, tokenizer, classes):
 
 
 def get_ocr_input(
-    image_paths: dict[str, str],
-    classes: list[str],
-    write: str| None = None
+        image_paths: dict[str, str],
+        classes: list[str],
+        write: str | None = None
 ):
     json_obj = {}
     image_local_paths = get_floorplan_images(image_paths)
@@ -99,23 +98,24 @@ def get_model_result(
         classes: list[str],
         cuda=True,
         ocr_json: dict | None = None,
-        write = str | None,
+        write=str | None,
 ):
     json_lists = ocr_json or get_ocr_input(image_paths, classes)
     cfg = get_config()
     eval_kwargs = get_eval_kwargs_geolayoutlm_vie(classes=classes)
     net = get_model_and_load_weights(cfg, model_path, cuda)
     model_existing_outputs = load_json(write) if write and os.path.exists(write) else {}
-    json_lists = {i:v for i,v in json_lists.items() if i not in model_existing_outputs}
+    json_lists = {i: v for i, v in json_lists.items() if i not in model_existing_outputs}
+    json_lists = get_floorplan_images_with_path(json_lists)
+
     dict_result = {}
     if json_lists:
-        json_lists = get_floorplan_images_with_path(json_lists)
         dataset = get_dataset(list(json_lists.values()), cfg, net.tokenizer, classes=classes)
         processed_dfs = process_eval_dataset(net, dataset, eval_kwargs)
-        dict_result = {i: get_room_dm_pairs(df) for i,df in processed_dfs.items()}
+        dict_result = {i: get_room_dm_pairs(df) for i, df in processed_dfs.items()}
 
     if write:
-        dict_result = {i: v.json() for i,v in dict_result.items()}
+        dict_result = {i: v.json() for i, v in dict_result.items()}
         write_json(dict_result, write, True)
 
-    return model_existing_outputs| dict_result
+    return model_existing_outputs | dict_result
